@@ -1,4 +1,5 @@
 import {autobind} from "../util/autobind.js";
+import { Validatable, validate } from "../util/validation.js";
 
 //handles to render form element on the page
 export class ProjectInput{
@@ -32,14 +33,51 @@ export class ProjectInput{
 
        
         //call attach method to render form element
-        this.attach();
-         this.configure();
+            this.attach();
+            this.configure();
         
     }
+    private gatherUserInput():[string, string, number] | void {
+        const enteredTitle = this.titleInputElement.value;
+        const enteredDescription = this.descriptionElement.value;
+        const enteredPeople = this.peopleInputElement.value;
+
+        //validation rules for each field
+        const titleValid: Validatable = {value: enteredTitle, required: true  };
+        const descValid: Validatable = {value: enteredDescription, required: true, minLength: 5};
+        const peopleValid: Validatable = {value: +enteredPeople, required: true, min: 1, max:5 };
+
+        //run validation checks
+        if (!validate(titleValid) || !validate(descValid) || !validate(peopleValid)) {
+            alert('Invalid input, please try again!');
+            return;
+        }
+        //return validates values as a tuple
+        return [enteredTitle, enteredDescription, +enteredPeople];
+
+    }
+
+     // @autobind ensures "this" refers to the class instance even when used as a callback
     @autobind
     private submitHandler(event: Event) {
         event.preventDefault();
-        console.log(this.titleInputElement.value);
+        //console.log(this.titleInputElement.value);
+        //get validated user input
+        const userInput = this.gatherUserInput();
+
+        if (Array.isArray(userInput)) {
+            const [enteredTitle, enteredDescription, enteredPeople] = userInput;
+            console.log(enteredTitle, enteredDescription,enteredPeople );
+        }
+
+        //clear input fields after succeessfully submission
+        this.clearInputsField();
+
+    }
+    private clearInputsField() {
+        this.titleInputElement.value = '';
+        this.descriptionElement.value = '';
+        this.peopleInputElement.value = '';
     }
     private configure() {
         this.element.addEventListener('submit', this.submitHandler);
