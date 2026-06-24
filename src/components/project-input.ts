@@ -28,8 +28,18 @@ export class ProjectInput{
         this.descriptionElement = document.querySelector('#description') as HTMLTextAreaElement;
         this.peopleInputElement = document.querySelector('#people') as HTMLInputElement;
 
+        this.configure();
         //call attach method to render form element
         this.attach();
+        
+    }
+
+    private submitHandler(event: Event) {
+        event.preventDefault();
+        console.log(this.titleInputElement.value);
+    }
+    private configure() {
+        this.element.addEventListener('submit', this.submitHandler.bind(this));
     }
 
     //method to render form element at the top of the host element
