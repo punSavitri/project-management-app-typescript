@@ -1,3 +1,5 @@
+import {autobind} from "../util/autobind.js";
+
 //handles to render form element on the page
 export class ProjectInput{
 
@@ -24,22 +26,23 @@ export class ProjectInput{
         this.element.id = 'user-input';
 
         //connect form fields to class properties for easy access
-        this.titleInputElement = document.querySelector('#title') as HTMLInputElement;
-        this.descriptionElement = document.querySelector('#description') as HTMLTextAreaElement;
-        this.peopleInputElement = document.querySelector('#people') as HTMLInputElement;
+        this.titleInputElement = this.element.querySelector('#title') as HTMLInputElement;
+        this.descriptionElement = this.element.querySelector('#description') as HTMLTextAreaElement;
+        this.peopleInputElement = this.element.querySelector('#people') as HTMLInputElement;
 
-        this.configure();
+       
         //call attach method to render form element
         this.attach();
+         this.configure();
         
     }
-
+    @autobind
     private submitHandler(event: Event) {
         event.preventDefault();
         console.log(this.titleInputElement.value);
     }
     private configure() {
-        this.element.addEventListener('submit', this.submitHandler.bind(this));
+        this.element.addEventListener('submit', this.submitHandler);
     }
 
     //method to render form element at the top of the host element
