@@ -3,6 +3,10 @@
 //project management state class 
 export class ProjectState{
 
+    //listener
+    private listeners: any[] = []
+
+
     //fields
     private projects: any[] = [];
     private  static instance: ProjectState;
@@ -18,6 +22,12 @@ export class ProjectState{
         this.instance = new ProjectState();
         return this.instance;
     }
+
+    //added listeners function 
+    addListener(listenerFn: Function) {
+        this.listeners.push(listenerFn);
+
+    }
     //this method call when user click on Add Project button
     addProject(title: string, description: string, numOfPeople: number) {
         const newProject = {
@@ -28,6 +38,9 @@ export class ProjectState{
 
         };
         this.projects.push(newProject);
+        for (const listenerFn of this.listeners) {
+            listenerFn(this.projects.slice());
+        }
     }  
 }
-//const projectState = ProjectState.getInstance();
+export const projectState = ProjectState.getInstance();
