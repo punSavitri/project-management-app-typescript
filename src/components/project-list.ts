@@ -1,3 +1,4 @@
+import { projectState } from "../state/project-state";
 
 //this class responsible to render the project list based on template
 export class ProjectList{
@@ -10,6 +11,10 @@ export class ProjectList{
     //the actual DOM element created from the template
     element: HTMLElement;
 
+    assignedProjects: any[];
+
+
+
     //the contructor receive the type of project list: 'active' or 'finished'
     constructor(private type: 'active' | 'finished') {
 
@@ -18,7 +23,7 @@ export class ProjectList{
         
         //get the host element where the list will be inserted
         this.hostElement = document.getElementById('app')! as HTMLDivElement;
-        
+        this.assignedProjects = [];
         //import the content of the template (deep clone = true)
         const importNode = document.importNode(this.templateElement.content, true);
         
@@ -27,12 +32,27 @@ export class ProjectList{
 
         //assign the ID like 'active-projects' or 'finished-projects'
         this.element.id = `${this.type}-projects`;
+
+        //event listener to assigned new projects
+        projectState.addListener((projects: any[]) => {
+            this.assignedProjects = projects;
+            this.renderProjects();
+        })
         
         // call to insert the element into the DOM
         this.attach();
 
         //call to update text content and IDs inside the component
         this.rendercontent();
+    }
+    private renderProjects() {
+        const listEl = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
+        for (const prjItem of this.assignedProjects) {
+            const listItem = document.createElement('li');
+            listItem.textContent = prjItem.title;
+            listEl.appendChild(listItem)
+        }
+
     }
     
     //the method use to insert the components into the host element
