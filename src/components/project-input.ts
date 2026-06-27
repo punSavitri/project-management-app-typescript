@@ -1,7 +1,8 @@
+import { projectState } from "../state/project-state.js";
 import {autobind} from "../util/autobind.js";
 import { Validatable, validate } from "../util/validation.js";
 
-//handles to render form element on the page
+//this class render the form and gather the usee inputs
 export class ProjectInput{
 
     templateElement:HTMLTemplateElement;
@@ -66,8 +67,12 @@ export class ProjectInput{
         const userInput = this.gatherUserInput();
 
         if (Array.isArray(userInput)) {
-            const [enteredTitle, enteredDescription, enteredPeople] = userInput;
-            console.log(enteredTitle, enteredDescription,enteredPeople );
+            const [title, desc, people] = userInput;
+            //console.log(enteredTitle, enteredDescription,enteredPeople );
+
+            //call addProject()method once we gether user input
+            projectState.addProject(title, desc, people);
+
         }
 
         //clear input fields after succeessfully submission
