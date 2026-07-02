@@ -1,10 +1,13 @@
 import { Project, ProjectStatus } from "../models/project.js";
 
+//custom type Listener function
+type Listener = (items:Project[]) => void;
+
 //project management state class 
 export class ProjectState{
 
     //listener
-    private listeners: any[] = []
+    private listeners: Listener[] = []; 
 
 
     //fields
@@ -23,8 +26,8 @@ export class ProjectState{
         return this.instance;
     }
 
-    //added listeners function 
-    addListener(listenerFn: Function) {
+    //setup listeners function 
+    addListener(listenerFn: Listener) {
         this.listeners.push(listenerFn);
 
     }
