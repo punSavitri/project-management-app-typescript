@@ -12,7 +12,7 @@ export class ProjectList{
     //the actual DOM element created from the template
     element: HTMLElement;
 
-    assignedProjects: Project[];  //
+    assignedProjects: Project[];  //used Project custom class to assigned an array of projects
 
 
 
@@ -35,7 +35,7 @@ export class ProjectList{
         this.element.id = `${this.type}-projects`;
 
         //event listener to assigned new projects
-        projectState.addListener((projects: any[]) => {
+        projectState.addListener((projects: Project[]) => {
             this.assignedProjects = projects;
             this.renderProjects();
         })
