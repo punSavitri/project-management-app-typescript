@@ -1,4 +1,5 @@
-import { projectState } from "../state/project-state";
+import { Project } from "../models/project.js";
+import { projectState } from "../state/project-state.js";
 
 //this class responsible to render the project list based on template
 export class ProjectList{
@@ -11,7 +12,7 @@ export class ProjectList{
     //the actual DOM element created from the template
     element: HTMLElement;
 
-    assignedProjects: any[];
+    assignedProjects: Project[];  //
 
 
 
@@ -50,7 +51,7 @@ export class ProjectList{
         for (const prjItem of this.assignedProjects) {
             const listItem = document.createElement('li');
             listItem.textContent = prjItem.title;
-            listEl.appendChild(listItem)
+            listEl.appendChild(listItem);
         }
 
     }
