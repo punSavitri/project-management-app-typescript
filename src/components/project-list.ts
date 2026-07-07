@@ -1,39 +1,35 @@
 import { Project, ProjectStatus } from "../models/project.js";
 import { projectState } from "../state/project-state.js";
+import { Component } from "./base-component.js";
 
 //this class responsible to render the project list based on template
-export class ProjectList{
-    //reference to the template element in the DOM
-    templateElement: HTMLTemplateElement;
+export class ProjectList extends Component<HTMLDivElement, HTMLElement>{      
 
-    //the host element where this component will be rendered (the #app div)
-    hostElement: HTMLDivElement;
-
-    //the actual DOM element created from the template
-    element: HTMLElement;
-
-    assignedProjects: Project[];  //used Project custom class to assigned an array of projects
-
+    assignedProjects: Project[] = [];  //used Project custom class to assigned an array of projects
 
 
     //the contructor receive the type of project list: 'active' or 'finished'
     constructor(private type: 'active' | 'finished') {
 
-        //get the template element that defines the structure of project list
-        this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement;
-        
-        //get the host element where the list will be inserted
-        this.hostElement = document.getElementById('app')! as HTMLDivElement;
+        super('project-list', 'app', false, `${type}-projects`) ;          
         this.assignedProjects = [];
-        //import the content of the template (deep clone = true)
-        const importNode = document.importNode(this.templateElement.content, true);
-        
-        //grab the first element inside the template<section>
-        this.element = importNode.firstElementChild as HTMLElement;
+        this.configure();
 
-        //assign the ID like 'active-projects' or 'finished-projects'
-        this.element.id = `${this.type}-projects`;
+        //call to update text content and IDs inside the component
+        this.renderContent();
 
+    }
+    private renderProjects() {
+        const listEl = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
+        //clear list item before to append new project
+        listEl.innerHTML = '';
+        for (const prjItem of this.assignedProjects) {
+            const listItem = document.createElement('li');
+            listItem.textContent = prjItem.title;
+            listEl.appendChild(listItem);
+        }
+    }    
+     configure() {
         //event listener to assigned new projects
         projectState.addListener((projects: Project[]) => {
             const relevantProjects = projects.filter(prj => {
@@ -46,31 +42,9 @@ export class ProjectList{
             this.assignedProjects = relevantProjects;
             this.renderProjects();
         })
-        
-        // call to insert the element into the DOM
-        this.attach();
-
-        //call to update text content and IDs inside the component
-        this.rendercontent();
-    }
-    private renderProjects() {
-        const listEl = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
-        listEl.innerHTML = '';
-        for (const prjItem of this.assignedProjects) {
-            const listItem = document.createElement('li');
-            listItem.textContent = prjItem.title;
-            listEl.appendChild(listItem);
-        }
-
-    }
-    
-    //the method use to insert the components into the host element
-    private attach() {
-        this.hostElement.insertAdjacentElement('beforeend', this.element);
-    }
-
+     }
     //the method updates the internal content of the component(title + list ID )
-    private rendercontent() {
+     renderContent() {
         
         const listId = `${this.type}-projects-list`;
         this.element.querySelector('ul')!.id = listId;         
