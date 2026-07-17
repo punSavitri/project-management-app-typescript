@@ -1,10 +1,12 @@
+import { DragTarget } from "../models/drag-drop.js";
 import { Project, ProjectStatus } from "../models/project.js";
 import { projectState } from "../state/project-state.js";
+import { autobind } from "../util/autobind.js";
 import { Component } from "./base-component.js";
 import { ProjectItem } from "./project-item.js";
 
 //this class responsible to render the project list based on template
-export class ProjectList extends Component<HTMLDivElement, HTMLElement>{      
+export class ProjectList extends Component<HTMLDivElement, HTMLElement> implements DragTarget{      
 
     assignedProjects: Project[] = [];  //used Project custom class to assigned an array of projects
 
@@ -20,7 +22,27 @@ export class ProjectList extends Component<HTMLDivElement, HTMLElement>{
         this.renderContent();
 
     }
+    @autobind
+     dragOverHandler(_: DragEvent) {
+        const listEl = this.element.querySelector('ul')!;
+        listEl.classList.add('droppable');
+         
+     }
+     @autobind
+     dropHandler(_: DragEvent){
+         
+     }
+     @autobind
+     dragLeaveHandler(_: DragEvent) {
+        const listEl = this.element.querySelector('ul')!;
+        listEl.classList.remove('droppable');
+         
+     }
     configure() {
+
+        this.element.addEventListener('dragover', this.dragOverHandler);
+        this.element.addEventListener('dragleave', this.dragLeaveHandler);
+        this.element.addEventListener('drop', this.dropHandler);
         //event listener to assigned new projects
         projectState.addListener((projects: Project[]) => {
             const relevantProjects = projects.filter(prj => {
@@ -34,6 +56,9 @@ export class ProjectList extends Component<HTMLDivElement, HTMLElement>{
             this.renderProjects();
         })
      }
+
+     
+
     //the method updates the internal content of the component(title + list ID )
      renderContent() {        
         const listId = `${this.type}-projects-list`;
